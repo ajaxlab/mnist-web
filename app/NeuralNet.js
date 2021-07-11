@@ -56,18 +56,30 @@ class NeuralNet {
     console.log('------ Epoch ------ (', epochCount, ')');
     const { annotations, onEnd, onEpoch } = this;
 
-    annotations.forEach(({ label, value: pixels }) => {
-      const input = pixels.map((pixel) => {
-        return (pixel / 255) * 0.99 + 0.01;
+    // annotations.forEach(({ label, value: pixels }) => {
+    //   const input = pixels.map((pixel) => {
+    //     return (pixel / 255) * 0.99 + 0.01;
+    //   });
+    //   this.#trainRecord(label, input);
+    // });
+
+    const promises = annotations.map((annotation) => {
+      const { label, value: pixels } = annotation;
+      return new Promise((resolve, reject) => {
+        setTimeout(() => {
+          const input = pixels.map((pixel) => {
+            return (pixel / 255) * 0.99 + 0.01;
+          });
+          this.#trainRecord(label, input);
+          resolve();
+        });
       });
-      this.#trainRecord(label, input);
     });
 
-    if (typeof onEpoch === 'function') {
-      onEpoch(epochCount);
-    }
-
-    setTimeout(() => {
+    Promise.all(promises).then(() => {
+      if (typeof onEpoch === 'function') {
+        onEpoch(epochCount);
+      }
       const remainEpoch = epochs - 1;
       if (remainEpoch) {
         this.runEpoch(remainEpoch);
@@ -77,6 +89,21 @@ class NeuralNet {
         }
       }
     });
+
+    // if (typeof onEpoch === 'function') {
+    //   onEpoch(epochCount);
+    // }
+
+    // setTimeout(() => {
+    //   const remainEpoch = epochs - 1;
+    //   if (remainEpoch) {
+    //     this.runEpoch(remainEpoch);
+    //   } else {
+    //     if (typeof onEnd === 'function') {
+    //       onEnd();
+    //     }
+    //   }
+    // });
   }
 
   saveModel() {}
