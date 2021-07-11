@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>MNIST Web</title>
+    <style>
+      .app {
+        width: 100%;
+      }
+      .testBox {
+        margin: 1rem 0;
+        display: flex;
+        gap: 1rem;
+      }
+      .inferenceBox {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+      }
+      .inference {
+        min-width: 142px;
+        height: 106px;
+        border: 1px solid #aaa;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 32pt;
+      }
+      .accuracy {
+        background-color: #ccc;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 9pt;
+        padding: 0.5rem;
+      }
+      .output {
+        margin-top: 2px;
+        background-color: #ccc;
+        font-size: 9pt;
+        padding: 0.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .editors {
+        width: 100%;
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        margin-top: 1rem;
+      }
+      .editorBox {
+        width: 142px;
+      }
+      .editorBox canvas.small {
+        width: 28px;
+        height: 28;
+        border: 1px solid #aaa;
+      }
+      .editorBox canvas.big {
+        width: 140px;
+        height: 140px;
+        border: 1px solid #aaa;
+      }
+      .editorBox .labelBox {
+        background-color: #ccc;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .editorBox .labelBox span {
+        display: inline-block;
+        font-size: 9pt;
+        margin: 4px;
+      }
+      .editorBox .labelBox input {
+        margin: 4px;
+        width: 4rem;
+        text-align: center;
+        font-size: 9pt;
+      }
+      .editorBox .labelBox button {
+        margin: 4px;
+        font-size: 9pt;
+      }
+      .control > * {
+        margin-right: 1rem;
+        padding: 0.5rem 1rem;
+      }
+      .control .label,
+      .control .epoch {
+        width: 3rem;
+      }
+    </style>
+    <script
+      src="https://unpkg.com/react@18/umd/react.development.js"
+      crossorigin
+    ></script>
+    <script
+      src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"
+      crossorigin
+    ></script>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+  </head>
+
+  <body>
+    <div id="container"></div>
+    <script src="mnist_train_1000.js"></script>
+    <script src="MathUtil.js"></script>
+    <script src="NeuralNet.js"></script>
+    <script src="PenTool.js"></script>
+    <script type="text/babel" src="Editor.jsx"></script>
+    <script type="text/babel" src="App.jsx"></script>
+    <script type="text/babel" src="main.jsx"></script>
+  </body>
+</html>
