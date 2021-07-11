@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>MNIST Web</title>
+    <title>Neural network for MNIST handwritten digit database</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -22,14 +22,14 @@
   </head>
 
   <body>
-    <h1>Web based Neural network from scratch</h1>
-    <h3>
-      <a href="mnist.html"
-        >Neural network for MNIST handwritten digit database</a
-      >
-    </h3>
-    <img src="images/mnist.png" alt="mnist data" />
-    <h3><a href="custom.html">Custom data annotations</a></h3>
-    <img src="images/custom.png" alt="custom data" />
+    <div id="container"></div>
+    <script src="dataset/mnist_train_1000.js"></script>
+    <script src="util/MathUtil.js"></script>
+    <script src="util/PenTool.js"></script>
+    <script src="NeuralNet.js"></script>
+    <script type="text/babel" src="components/Thumbnail.jsx"></script>
+    <script type="text/babel" src="components/Editor.jsx"></script>
+    <script type="text/babel" src="components/MnistApp.jsx"></script>
+    <script type="text/babel" src="mnist.jsx"></script>
   </body>
 </html>

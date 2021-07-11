@@ -2,14 +2,12 @@ const { useCallback, useState } = React;
 
 const net = new NeuralNet();
 
-const App = () => {
-  const [label, setLabel] = useState('');
+const MnistApp = () => {
   const [labelMap, setLabelMap] = useState({});
   const [epochs, setEpochs] = useState('10');
   const [errorOut, setErrorOut] = useState([]);
   const [finishedEpoch, setFinishedEpoch] = useState(0);
   const [training, setTraining] = useState(false);
-  const [annotations, setAnnotations] = useState([]);
   const [mnistData, setMnistData] = useState([]);
   const [inference, setInference] = useState({
     label: undefined,
@@ -34,17 +32,18 @@ const App = () => {
   );
 
   const runningEpoch = finishedEpoch ? `${finishedEpoch}/${epochs}` : null;
-  const hasAnnotations = !!annotations.length;
   const hasMnistData = !!mnistData.length;
 
   return (
     <div className='app'>
       <h1>Neural network for MNIST handwritten digit database</h1>
-      <a href='http://yann.lecun.com/exdb/mnist/' target='newlink'>
-        http://yann.lecun.com/exdb/mnist/
-      </a>
+      <div className='mnistLinkBox'>
+        <a href='http://yann.lecun.com/exdb/mnist/' target='newlink'>
+          http://yann.lecun.com/exdb/mnist/
+        </a>
+      </div>
       <div className='mnist'>
-        <h2>Train MNIST 1000</h2>
+        <h2>Train model</h2>
         <div className='control'>
           <button
             onClick={() => {
@@ -146,72 +145,8 @@ const App = () => {
           </div>
         ) : null}
       </div>
-      <div className='custom'>
-        <h2>Train your custom data annotations</h2>
-        <div className='control'>
-          Label
-          <input
-            className='label'
-            onChange={({ target }) => {
-              setLabel(target.value);
-            }}
-            placeholder='label'
-            value={label}
-          />
-          <button
-            onClick={() => {
-              setAnnotations([...annotations, { label, value: undefined }]);
-              const currentLabelCount = labelMap[label];
-              setLabelMap({
-                ...labelMap,
-                [label]: currentLabelCount ? currentLabelCount + 1 : 1,
-              });
-            }}
-          >
-            Add label
-          </button>
-          Epoch
-          <input
-            className='epoch'
-            onChange={({ target }) => {
-              setEpochs(target.value);
-            }}
-            placeholder='epochs'
-            type='number'
-            value={epochs}
-          />
-          <button
-            disabled={training || !annotations.length}
-            onClick={() => {
-              setTraining(true);
-              setTimeout(() => {
-                const labels = Object.keys(labelMap);
-                net.init(annotations, 100, labels, 0.1, epochs);
-                net.train();
-              });
-            }}
-          >
-            {trainButtonTitle}
-          </button>
-          <span>{hasAnnotations && runningEpoch}</span>
-        </div>
-        <div className='editors'>
-          {annotations.map(({ label, value }, i) => {
-            return (
-              <Editor
-                key={i}
-                label={label}
-                value={value}
-                onDraw={(imageData) => {
-                  annotations[i].value = imageData;
-                }}
-              />
-            );
-          })}
-        </div>
-      </div>
       <div className='test'>
-        <h2>Test your model</h2>
+        <h2>Test model</h2>
         <div className='testBox'>
           <Editor
             hideLabel={true}
@@ -223,9 +158,7 @@ const App = () => {
                 const result = net.query(imageData);
                 setInference(result);
               } else {
-                window.alert(
-                  'Load MNIST database or add your custom annotations first.'
-                );
+                window.alert('Load MNIST database.');
               }
             }}
           />
