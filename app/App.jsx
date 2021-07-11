@@ -137,6 +137,14 @@ const App = () => {
             </React.Fragment>
           ) : null}
         </div>
+        {mnistData.length ? (
+          <div className='thumbnailBox'>
+            <h3>Dataset</h3>
+            {mnistData.map((record, i) => {
+              return <Thumbnail key={i} record={record} />;
+            })}
+          </div>
+        ) : null}
       </div>
       <div className='custom'>
         <h2>Train your custom data annotations</h2>
