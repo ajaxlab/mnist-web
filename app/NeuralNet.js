@@ -1,15 +1,14 @@
 class NeuralNet {
-  init(annotations, hiddenLayers, labels, learningRate) {
+  init(annotations, hiddenLayers, labels, learningRate, epochs) {
     this.annotations = annotations;
 
     this.layer1 = annotations[0].value.length;
     this.layer2 = hiddenLayers;
     this.layer3 = labels.length;
 
-    console.log('layers', this.layer1, this.layer2, this.layer3);
-
     this.labels = labels;
     this.learningRate = learningRate;
+    this.epochs = epochs;
 
     this.w12 = getNormallyDistributedMatrix(
       0,
@@ -23,11 +22,15 @@ class NeuralNet {
       this.layer3,
       this.layer2
     );
-    console.log('this.w23', this.w23);
 
     this.expectation = this.#getExpectation();
 
-    console.log(this);
+    console.log('init', this);
+  }
+
+  hasModel() {
+    const { w12, w23 } = this;
+    return !!(w12 && w12.length && w23 && w23.length);
   }
 
   loadModel() {}
@@ -48,34 +51,51 @@ class NeuralNet {
     };
   }
 
+  runEpoch(epochs) {
+    const epochCount = this.epochs - epochs + 1;
+    console.log('------ Epoch ------ (', epochCount, ')');
+    const { annotations, onEnd, onEpoch } = this;
+
+    annotations.forEach(({ label, value: pixels }) => {
+      const input = pixels.map((pixel) => {
+        return (pixel / 255) * 0.99 + 0.01;
+      });
+      this.#trainRecord(label, input);
+    });
+
+    if (typeof onEpoch === 'function') {
+      onEpoch(epochCount);
+    }
+
+    setTimeout(() => {
+      const remainEpoch = epochs - 1;
+      if (remainEpoch) {
+        this.runEpoch(remainEpoch);
+      } else {
+        if (typeof onEnd === 'function') {
+          onEnd();
+        }
+      }
+    });
+  }
+
   saveModel() {}
 
   test() {}
 
-  train(epochs) {
-    const { annotations, onEnd } = this;
-    for (let i = 0; i < epochs; i++) {
-      console.log('------ Epoch ------ (', i, ')');
-      annotations.forEach(({ label, value: pixels }) => {
-        const input = pixels.map((pixel) => {
-          return (pixel / 255) * 0.99 + 0.01;
-        });
-        this.#trainRecord(label, input);
-      });
-    }
-    if (typeof onEnd === 'function') {
-      onEnd();
-    }
+  train() {
+    this.runEpoch(this.epochs);
   }
 
   #backPropagate(label, out1, out2, out3) {
     const expectation = transpose(this.expectation[label]);
-    console.log('backPropagate expectation', expectation);
-    console.log('this.w23', size(this.w23));
+    // console.log('backPropagate expectation', expectation);
+    // console.log('this.w23', size(this.w23));
 
     const err3 = subtractVectors(expectation, out3);
-    console.log('backPropagate out2', size(out2));
-    console.log('backPropagate out3', size(out3));
+
+    // console.log('backPropagate out2', size(out2));
+    // console.log('backPropagate out3', size(out3));
 
     // this.w23 += this.learningRate * np.dot(err3 * out3 * (1 - out3), out2.T);
 
@@ -92,14 +112,14 @@ class NeuralNet {
 
     this.w23 = addVectors(this.w23, delta23);
 
-    console.log('out2.T', size(transpose(out2)));
-    console.log('delta23', size(delta23));
-    console.log('err3', size(err3));
-    console.log('delta23', delta23);
-    console.log('this.w23', this.w23);
+    // console.log('out2.T', size(transpose(out2)));
+    // console.log('delta23', size(delta23));
+    // console.log('err3', size(err3));
+    // console.log('delta23', delta23);
+    // console.log('this.w23', this.w23);
 
     const err2 = matrixMultiply(transpose(this.w23), err3);
-    console.log('err2', err2);
+    // console.log('err2', err2);
 
     const delta12 = multiplyVector(
       matrixMultiply(
@@ -113,6 +133,10 @@ class NeuralNet {
     );
 
     this.w12 = addVectors(this.w12, delta12);
+
+    if (typeof this.onTrainRecord === 'function') {
+      this.onTrainRecord(err3);
+    }
   }
 
   #forwardPropagate(input) {
@@ -139,8 +163,8 @@ class NeuralNet {
   }
 
   #trainRecord(label, input) {
-    console.log('trainRecord label', label);
-    console.log('trainRecord input', input);
+    // console.log('trainRecord label', label);
+    // console.log('trainRecord input', input);
     const [out1, out2, out3] = this.#forwardPropagate(input);
     this.#backPropagate(label, out1, out2, out3);
   }
