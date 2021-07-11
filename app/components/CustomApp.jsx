@@ -164,9 +164,7 @@ const CustomApp = () => {
                 const result = net.query(imageData);
                 setInference(result);
               } else {
-                window.alert(
-                  'Load MNIST database or add your custom annotations first.'
-                );
+                window.alert('Add your custom annotations first.');
               }
             }}
           />
